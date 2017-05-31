@@ -12,26 +12,24 @@ namespace ThunleiCore.Login
 {
     public class DeviceFingerPrintGenerator
     {
-        public async Task<DeviceFingerPrint> GenerateDeviceFingerPrint(string userAgent, 
-            string screenRes, string colorDepth, string userPlatform, string referrer)
+        public async Task<DeviceFingerPrint> GenerateDeviceFingerPrint(RandomDeviceInfo randomDeviceInfo)
         {
-            string deviceFingerPrintRaw = _GenerateDeviceFingerPrintRaw(userAgent, screenRes, colorDepth, userPlatform);
+            string deviceFingerPrintRaw = _GenerateDeviceFingerPrintRaw(randomDeviceInfo);
             
             return new DeviceFingerPrint(deviceFingerPrintRaw, 
-                await _GetFingerPrintSignature(deviceFingerPrintRaw, userAgent, referrer), 
+                await _GetFingerPrintSignature(deviceFingerPrintRaw, randomDeviceInfo), 
                 LoginUtils.GetMD5(deviceFingerPrintRaw));
         }
 
-        private string _GenerateDeviceFingerPrintRaw(string userAgent, 
-            string screenRes, string colorDepth, string userPlatform)
+        private string _GenerateDeviceFingerPrintRaw(RandomDeviceInfo randomDeviceInfo)
         {
 
             var fingerPrintList = new List<string>()
             {
-                userAgent, // User agent
+                randomDeviceInfo.userAgent, // User agent
                 "zh-CN", // Language
-                colorDepth, // Color depth
-                screenRes, // Screen resolution
+                randomDeviceInfo.colorDepth, // Color depth
+                randomDeviceInfo.screenRes, // Screen resolution
                 "-480", // Timezone offset (Let's pretend to be in China lol)
                 "true", // (Pretend to have) session storage
                 "true", // (Pretend to have) local storage
@@ -39,7 +37,7 @@ namespace ThunleiCore.Login
                 "undefined", // typeof document.body.addBehavior
                 "function", // typeof window.openDatabase()
                 "undefined", // navigator.cpuClass
-                userPlatform, // navigator.platform
+                randomDeviceInfo.platform, // navigator.platform
                 "1", // "Do Not Track" flag (but the Big Brother is still watching you anyway...)
 
                 // List of browser plugin, just make a FAKE NEWS and return.
@@ -59,7 +57,7 @@ namespace ThunleiCore.Login
 
         }
 
-        public async Task<string> _GetFingerPrintSignature(string fingerPrint, string userAgent, string referrer)
+        public async Task<string> _GetFingerPrintSignature(string fingerPrint, RandomDeviceInfo randomDeviceInfo)
         {
             // Initialize HTTP client and set base URL
             var httpClient = new HttpClient()
@@ -68,8 +66,8 @@ namespace ThunleiCore.Login
             };
             
             // Set the fake user-agent and referrer
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", referrer);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomDeviceInfo.userAgent);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", randomDeviceInfo.referrer);
             
             // Get the Javascript to string
             string magicJavaScript = await httpClient.GetStringAsync(

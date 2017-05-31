@@ -8,7 +8,7 @@ namespace ThunleiCore.Login
 {
     public class Login
     {
-        private CookieContainer _cookieContainer;
+        private CookieContainer _cookieContainer { get; set; }
 
         public Login()
         {
@@ -22,27 +22,57 @@ namespace ThunleiCore.Login
 
         public async Task<LoginResult> RunLogin(string userName, string userPassword)
         {
+            // Get a random fake device information
+            var deviceInfo = RandomDeviceInfoGenerator.GetAllDeviceInfo();
             
-        }
-
-        /// <summary>
-        /// Get the CSRF token (Cross Site Reference Token?)
-        /// </summary>
-        /// <param name="cookieContainer"></param>
-        /// <param name="deviceFingerPrint"></param>
-        /// <returns>csrf token in 32-char string</returns>
-        private async Task<InitialCsrfToken> _GetCsrfToken(CookieContainer cookieContainer, DeviceFingerPrint deviceFingerPrint)
-        {
-            // Declare HttpClient
+            // Get the device fingerprint, it may takes a while.
+            var fingerPrintGenerator = new DeviceFingerPrintGenerator();
+            var initialResult = await _GetCsrfToken(
+                await fingerPrintGenerator.GenerateDeviceFingerPrint(deviceInfo), deviceInfo);
+            
+            // If it returns a fatal initial result, return a fatal login result too (and then terminate the process)
+            if (!initialResult.IsSuccessful)
+            {
+                return new LoginResult()
+                {
+                    HasLoggedIn = false,
+                    CookieContainer = null,
+                    ErrorMessage = initialResult.ErrorMessage
+                };
+            }
+            
+            // If process continues, declare HttpClient.
             var httpHandler = new HttpClientHandler()
             {
-                CookieContainer = cookieContainer
+                CookieContainer = _cookieContainer
             };
 
             var httpClient = new HttpClient(httpHandler)
             {
                 BaseAddress = new Uri("https://login.xunlei.com")
             };
+            
+            // Prepare the header
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomDeviceInfo.userAgent);
+            httpClient.DefaultRequestHeaders.Add("Referer", randomDeviceInfo.referrer);
+        }
+
+        private async Task<InitialCsrfToken> _GetCsrfToken(DeviceFingerPrint deviceFingerPrint, RandomDeviceInfo randomDeviceInfo)
+        {
+            // Declare HttpClient
+            var httpHandler = new HttpClientHandler()
+            {
+                CookieContainer = _cookieContainer
+            };
+
+            var httpClient = new HttpClient(httpHandler)
+            {
+                BaseAddress = new Uri("https://login.xunlei.com")
+            };
+            
+            // Prepare the header
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomDeviceInfo.userAgent);
+            httpClient.DefaultRequestHeaders.Add("Referer", randomDeviceInfo.referrer);
 
             // Prepare the signature and submit
             string stringContent = string.Format("xl_fp_raw={0}&xl_fp={1}&xl_fp_sign={2}}&cachetime={3}",
@@ -59,6 +89,8 @@ namespace ThunleiCore.Login
             // If not successful, return an empty string (to shut up the compiler!)
             if (!httpResponse.IsSuccessStatusCode)
             {
+                httpClient.Dispose();
+                
                 return new InitialCsrfToken()
                 {
                     ErrorMessage = string.Format("HTTP {0} - {1}", ((int) httpResponse.StatusCode).ToString(),
@@ -72,15 +104,17 @@ namespace ThunleiCore.Login
             // The device ID will be granted by Thunder's server (https://login.xunlei.com/risk?cmd=report)
             // The format of a device ID is something like this: 
             //         wdi10.abcabcabcabcabbabcabccabcabceeabcabcaabcabcabcaabcabcaaabcabcabc
-            string deviceId = LoginUtils.FindCookieValue(cookieContainer, "deviceid", ".xunlei.com");
+            string deviceId = LoginUtils.FindCookieValue(_cookieContainer, "deviceid", ".xunlei.com");
 
             // Then we need to get its MD5 hash, substring from it with length 32 (i.e. get the first 32 chars)
             string csrfToken = LoginUtils.GetMD5(deviceId.Substring(0, 32));
 
+            // Dispose the http client and return
+            httpClient.Dispose();
+            
             return new InitialCsrfToken()
             {
                 IsSuccessful = true,
-                CookieContainer = cookieContainer,
                 CsrfToken = csrfToken,
                 ErrorMessage = string.Empty
             };

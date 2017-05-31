@@ -7,6 +7,5 @@ namespace ThunleiCore.Login
         public bool IsSuccessful { get; set; }
         public string CsrfToken { get; set; }
         public string ErrorMessage { get; set; }
-        public CookieContainer CookieContainer { get; set; }
     }
 }
