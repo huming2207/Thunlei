@@ -53,8 +53,43 @@ namespace ThunleiCore.Login
             };
             
             // Prepare the header
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomDeviceInfo.userAgent);
-            httpClient.DefaultRequestHeaders.Add("Referer", randomDeviceInfo.referrer);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(deviceInfo.userAgent);
+            httpClient.DefaultRequestHeaders.Add("Referer", deviceInfo.referrer);
+
+            // Prepare the POST content
+            string stringContent = string.Format("p={0}&u={1}&verifycode=&login_enable=0&business_type=108&v=101&cachetime={2}", 
+                userPassword, userName, DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+
+            var postContent = new StringContent(stringContent, Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            // Prepare the query address
+            string queryAddress = string.Format("/sec2login/?csrf_token={0}", initialResult.CsrfToken);
+
+            // ...then run POST
+            var httpResponse = await httpClient.PostAsync(queryAddress, postContent);
+
+            // Terminate the process if it is not successful.
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                httpClient.Dispose();
+                return new LoginResult()
+                {
+                    CookieContainer = _cookieContainer,
+                    ErrorMessage = httpResponse.ReasonPhrase,
+                    HasLoggedIn = false
+                };
+            }
+            else
+            {
+                httpClient.Dispose();
+                return new LoginResult()
+                {
+                    CookieContainer = _cookieContainer,
+                    ErrorMessage = httpResponse.ReasonPhrase,
+                    HasLoggedIn = true
+                };
+            }
+            
         }
 
         private async Task<InitialCsrfToken> _GetCsrfToken(DeviceFingerPrint deviceFingerPrint, RandomDeviceInfo randomDeviceInfo)
