@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace ThunleiCore.LixianApi
+namespace ThunleiCore.LixianApi.TaskResponse
 {
-    public class ThunderLixianBase
+    public class ThunderLixianResponse
     {
         [JsonProperty("rtcode")]
         public int Rtcode { get; set; }

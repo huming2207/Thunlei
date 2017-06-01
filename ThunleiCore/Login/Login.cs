@@ -76,7 +76,8 @@ namespace ThunleiCore.Login
                 {
                     CookieContainer = _cookieContainer,
                     ErrorMessage = httpResponse.ReasonPhrase,
-                    HasLoggedIn = false
+                    HasLoggedIn = false,
+                    DeviceInfo = deviceInfo
                 };
             }
             else
@@ -86,7 +87,8 @@ namespace ThunleiCore.Login
                 {
                     CookieContainer = _cookieContainer,
                     ErrorMessage = httpResponse.ReasonPhrase,
-                    HasLoggedIn = true
+                    HasLoggedIn = true,
+                    DeviceInfo = deviceInfo
                 };
             }
             
