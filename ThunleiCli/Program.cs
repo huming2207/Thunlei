@@ -26,7 +26,13 @@ namespace ThunleiCli
             else
             {
                 Console.WriteLine("[INFO] Login failed, reason: {0}", loginResult.ErrorMessage);
+                Environment.Exit(1);
             }
+
+            var lixianApi = new LixianApi(loginResult);
+            var lixianQueryResult = lixianApi.TaskListQuery().Result;
+
+            Console.Read();
         }
     }
 }

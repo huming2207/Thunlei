@@ -112,7 +112,7 @@ namespace ThunleiCore.Login
             httpClient.DefaultRequestHeaders.Add("Referer", randomDeviceInfo.referrer);
 
             // Prepare the signature and submit
-            string stringContent = string.Format("xl_fp_raw={0}&xl_fp={1}&xl_fp_sign={2}}&cachetime={3}",
+            string stringContent = string.Format("xl_fp_raw={0}&xl_fp={1}&xl_fp_sign={2}&cachetime={3}",
                 deviceFingerPrint.DeviceFingerPrintRaw, deviceFingerPrint.DeviceFingerPrintChecksum,
                 deviceFingerPrint.DeviceFingerPrintSingature, DateTimeOffset.Now.ToUnixTimeMilliseconds());
             
@@ -141,7 +141,7 @@ namespace ThunleiCore.Login
             // The device ID will be granted by Thunder's server (https://login.xunlei.com/risk?cmd=report)
             // The format of a device ID is something like this: 
             //         wdi10.abcabcabcabcabbabcabccabcabceeabcabcaabcabcabcaabcabcaaabcabcabc
-            string deviceId = LoginUtils.FindCookieValue(_cookieContainer, "deviceid", ".xunlei.com");
+            string deviceId = LoginUtils.FindCookieValue(_cookieContainer, "deviceid", "http://xunlei.com");
 
             // Then we need to get its MD5 hash, substring from it with length 32 (i.e. get the first 32 chars)
             string csrfToken = LoginUtils.GetMD5(deviceId.Substring(0, 32));

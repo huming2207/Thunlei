@@ -21,7 +21,7 @@ namespace ThunleiCore.LixianApi
             _randomDeviceInfo = loginResult.DeviceInfo;
         }
 
-        public async Task<ThunderLixianResponse> QueryResponse(int taskToGet = 100)
+        public async Task<ThunderLixianResponse> TaskListQuery(int taskToGet = 100)
         {
             return await _GetData<ThunderLixianResponse>(
                 string.Format("/interface/showtask_unfresh?callback=&type_id=4&page=1&tasknum={0}&p=1&interfrom=task", 
