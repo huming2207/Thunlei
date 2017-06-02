@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThunleiCore", "ThunleiCore\ThunleiCore.csproj", "{D3F18711-8AD9-4B83-A440-0F5087A37C00}"
 EndProject
+Project("{61B5D4B7-A421-4AE3-B032-FA9A6B65326B}") = "ThunleiCli", "ThunleiCli\ThunleiCli.csproj", "{2169F2DC-FF11-4571-8461-58D71875077D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D3F18711-8AD9-4B83-A440-0F5087A37C00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3F18711-8AD9-4B83-A440-0F5087A37C00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3F18711-8AD9-4B83-A440-0F5087A37C00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2169F2DC-FF11-4571-8461-58D71875077D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2169F2DC-FF11-4571-8461-58D71875077D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2169F2DC-FF11-4571-8461-58D71875077D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2169F2DC-FF11-4571-8461-58D71875077D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

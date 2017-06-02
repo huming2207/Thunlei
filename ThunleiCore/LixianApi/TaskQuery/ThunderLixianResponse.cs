@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace ThunleiCore.LixianApi.TaskResponse
+namespace ThunleiCore.LixianApi.TaskQuery
 {
     public class ThunderLixianResponse
     {

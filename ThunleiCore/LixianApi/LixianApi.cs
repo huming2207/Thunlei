@@ -6,19 +6,19 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ThunleiCore.Login;
-using ThunleiCore.LixianApi.TaskResponse;
+using ThunleiCore.LixianApi.TaskQuery;
 
 namespace ThunleiCore.LixianApi
 {
     public class LixianApi
     {
-        private CookieContainer _CookieContainer;
-        private RandomDeviceInfo _RandomDeviceInfo;
+        private CookieContainer _cookieContainer;
+        private RandomDeviceInfo _randomDeviceInfo;
 
         public LixianApi(LoginResult loginResult)
         {
-            _CookieContainer = loginResult.CookieContainer;
-            _RandomDeviceInfo = loginResult.DeviceInfo;
+            _cookieContainer = loginResult.CookieContainer;
+            _randomDeviceInfo = loginResult.DeviceInfo;
         }
 
         public async Task<ThunderLixianResponse> QueryResponse(int taskToGet = 100)
@@ -32,7 +32,7 @@ namespace ThunleiCore.LixianApi
         {
             var httpHandler = new HttpClientHandler()
             {
-                CookieContainer = _CookieContainer
+                CookieContainer = _cookieContainer
             };
 
             var httpClient = new HttpClient(httpHandler)
@@ -41,7 +41,7 @@ namespace ThunleiCore.LixianApi
             };
 
             // Prepare the header
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(_RandomDeviceInfo.userAgent);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(_randomDeviceInfo.userAgent);
 
             // Run GET
             var httpResponse = await httpClient.GetAsync(queryPath);

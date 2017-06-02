@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThunleiCore\ThunleiCore.csproj">
+      <Project>{d3f18711-8ad9-4b83-a440-0f5087a37c00}</Project>
+      <Name>ThunleiCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
